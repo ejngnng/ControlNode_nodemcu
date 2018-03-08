@@ -1,6 +1,10 @@
+
+#ifndef deviceManipulation_H
+#define deviceManipulation_H
+
+#include <Arduino.h>
+
 #include <PubSubClient.h>
-#include "SSDPClient.h"
-#include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 
 #include <WiFiManager.h>
@@ -24,16 +28,6 @@ public:
     int deviceOperate(byte* payload);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 };
+
+#endif

@@ -29,7 +29,7 @@ int deviceManipulation::deviceRegister()
 }
 
 int deviceManipulation::deviceOperate(byte* payload)
-{  
+{
     char msg[256] = {0};
     StaticJsonBuffer<200> jsonBuffer;
     JsonObject& data = jsonBuffer.parse(payload);

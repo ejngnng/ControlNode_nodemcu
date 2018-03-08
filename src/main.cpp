@@ -1,16 +1,16 @@
 
 /*
- * Description:  control relay with ssdp and mqtt 
- * 
+ * Description:  control relay with ssdp and mqtt
+ *
  * Author: ninja
- * 
+ *
  * Date: 2017-05-06
- * 
+ *
  */
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include "SSDPClient.h"
+#include "SSDP/SSDPClient.h"
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 
@@ -19,7 +19,7 @@
 
 #include <EEPROM.h>
 
-#include "deviceManipulation.h"
+#include "Operate/deviceManipulation.h"
 
 const char* ssid = "ZQKL";
 const char* password = "zqkl123456..";
@@ -98,7 +98,7 @@ typedef struct WiFi_Obj_s{
 }WiFi_Obj_t;
 
 // global variables
-SW_state_t sw_state = OFF; 
+SW_state_t sw_state = OFF;
 
 #if 0
 String gssdp_notify_template =
@@ -139,7 +139,7 @@ void TurnON(){
   digitalWrite(SW, HIGH);
   LED_RELAY_ON;
   sw_state = ON;
-  
+
 #ifdef DEBUG_SW
   DEBUG_SW.println(TimeStamp + "turn On light...");
 #endif
@@ -153,7 +153,7 @@ void TurnOFF(){
   digitalWrite(SW, LOW);
   LED_RELAY_OFF;
   sw_state = OFF;
-  
+
 #ifdef DEBUG_SW
   DEBUG_SW.println(TimeStamp + "turn Off light...");
 #endif
@@ -172,10 +172,10 @@ void store_wifi(){
   unsigned int ssid_len = WiFi.SSID().length();
   unsigned int psw_len  = WiFi.psk().length();
   EEPROM.begin(512);
-  
+
   EEPROM.write(WiFi_SSID_LEN_ADDR, ssid_len);
   EEPROM.write(WiFi_PSW_LEN_ADDR, psw_len);
-  
+
   String ssid = WiFi.SSID();
   String psw = WiFi.psk();
 
@@ -186,10 +186,10 @@ void store_wifi(){
   for(unsigned int j=0;j<psw_len;j++){
     EEPROM.write(WiFi_PSW_ADDR+j, psw[j]);
   }
-  
+
   EEPROM.commit();
   EEPROM.end();
-  
+
 }
 
 void get_wifi(WiFi_Obj_t *wifi_obj){
@@ -226,9 +226,9 @@ void get_wifi(WiFi_Obj_t *wifi_obj){
 
 bool jsonPaser(byte* payload){
 
-// detect duplicate msg 
+// detect duplicate msg
   unsigned long currentMsg = millis();
-  
+
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& data = jsonBuffer.parse(payload);
   if(!data.success()){
@@ -257,7 +257,7 @@ bool jsonPaser(byte* payload){
     return false;
   }
   return true;
-  
+
 }
 
 void callback(char* topic, byte* payload, unsigned int length){
@@ -265,13 +265,13 @@ void callback(char* topic, byte* payload, unsigned int length){
   DEBUG_MQTT.print(TimeStamp + "Message arrived [");
   DEBUG_MQTT.print(topic);
   DEBUG_MQTT.print("] ");
- 
+
   for (int i = 0; i < length; i++) {
     DEBUG_MQTT.print((char)payload[i]);
   }
   DEBUG_MQTT.println();
-#endif 
- 
+#endif
+
   //jsonPaser(payload);
   if(strcmp(topic, "device/device_operate") == 0)
     devicMp.deviceOperate(payload);
@@ -280,9 +280,9 @@ void callback(char* topic, byte* payload, unsigned int length){
 
 bool MQTTSetup(){
   Serial.println(TimeStamp + "start MQTTSetup...");
-#if 0  
+#if 0
   char mqtt_server[255] = "";
-  String location = SSDPClient.getLocation(); 
+  String location = SSDPClient.getLocation();
   if(location == ""){
     return false;
   }
@@ -396,7 +396,7 @@ void Connect_WiFi(){
 
 void setup(){
   Serial.begin(9600);
-  
+
   portInit();
 
   //Connect_WiFi();
@@ -420,30 +420,29 @@ void loop(){
   if(MQTTClient.connected())
   {
     MQTTClient.loop();
-  
-  //Attempting to keepalive 
-    unsigned long currentMillis = millis(); 
-  
+
+  //Attempting to keepalive
+    unsigned long currentMillis = millis();
+
     if (currentMillis - previousMillis > aliveInterval) {
       previousMillis = currentMillis;
       aliveMsg = "Device is alive";
       //MQTTClient.publish(pubTopic, aliveMsg.c_str());
-    }    
+    }
   }
 
 //get cmd from uart
   char onoff;
-  while(Serial.available()>0){  
-    onoff = Serial.read();//读串口第一个字节  
-    Serial.print("Serial.read: ");  
-    Serial.print(onoff);  
+  while(Serial.available()>0){
+    onoff = Serial.read();//读串口第一个字节
+    Serial.print("Serial.read: ");
+    Serial.print(onoff);
 
     if(onoff == 0x55)
       TurnON();
     else if(onoff == 0x56)
       TurnOFF();
     delay(100);
-    } 
+    }
 
 }
-
