@@ -20,6 +20,7 @@
 #include <EEPROM.h>
 
 #include "Operate/deviceManipulation.h"
+#include "GPIO/io.h"
 
 const char* ssid = "ZQKL";
 const char* password = "zqkl123456..";
@@ -32,8 +33,8 @@ WiFiClient espClient;
 PubSubClient MQTTClient(espClient);
 deviceManipulation devicMp(&MQTTClient);
 
-#define DEBUG_WiFi  Serial
-#define DEBUG_MQTT  Serial
+// #define DEBUG_WiFi  Serial
+// #define DEBUG_MQTT  Serial
 //#define DEBUG_JSON  Serial
 //#define DEBUG_SW    Serial
 
@@ -44,17 +45,6 @@ const char* pubTopic = "device/device_register";
 
 const char* device_name = "switch2";
 
-#define SW  5 //nodemcu D1
-
-#define LED_SSDP  14  //nodemcu D5
-#define LED_MQTT  12  //nodemcu D6
-#define LED_RELAY 13  //nodemcu D7
-
-#define LED_MQTT_ON   digitalWrite(LED_MQTT, LOW)
-#define LED_MQTT_OFF  digitalWrite(LED_MQTT, HIGH)
-
-#define LED_RELAY_ON  digitalWrite(LED_RELAY, LOW)
-#define LED_RELAY_OFF digitalWrite(LED_RELAY, HIGH)
 
 #define WiFi_SSID_LEN_ADDR  0
 #define WiFi_PSW_LEN_ADDR   1
@@ -63,7 +53,7 @@ const char* device_name = "switch2";
 #define WiFi_PSW_ADDR      34
 
 
-#define TimeStamp   (String("[") + String(millis()) + String("] "))
+
 
 //volatile bool MQTT_Status = false;
 
@@ -79,15 +69,10 @@ typedef struct Sub_Msg_s{
   const char* value;
 }Sub_Msg_t;
 
-typedef enum SW_state_s{
-  ON,
-  OFF
-}SW_state_t;
-
 typedef struct Device_Obj_s{
   const char* deviceName;
   const char* deviceID;
-  SW_state_t state;
+  state_t state;
 }Device_Obj_t;
 
 typedef struct WiFi_Obj_s{
@@ -98,7 +83,7 @@ typedef struct WiFi_Obj_s{
 }WiFi_Obj_t;
 
 // global variables
-SW_state_t sw_state = OFF;
+state_t sw_state = OFF;
 
 #if 0
 String gssdp_notify_template =
@@ -112,53 +97,6 @@ String gssdp_notify_template =
   "USN: uuid:5911c26e-ccc3c-5421-3721-b827eb3ea653::urn:schemas-upnp-org:service:voice-master:1\r\n";
 
 #endif
-
-void portInit(){
-  pinMode(SW, OUTPUT);
-  digitalWrite(SW, LOW);
-
-  pinMode(LED_SSDP, OUTPUT);
-  digitalWrite(LED_SSDP, HIGH);
-
-  pinMode(LED_MQTT, OUTPUT);
-  digitalWrite(LED_MQTT, HIGH);
-
-  pinMode(LED_RELAY, OUTPUT);
-  digitalWrite(LED_RELAY, HIGH);
-
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
-
-}
-
-void TurnON(){
-  if(sw_state == ON){
-    // already on
-    return;
-  }
-  digitalWrite(SW, HIGH);
-  LED_RELAY_ON;
-  sw_state = ON;
-
-#ifdef DEBUG_SW
-  DEBUG_SW.println(TimeStamp + "turn On light...");
-#endif
-}
-
-void TurnOFF(){
-  if(sw_state == OFF){
-    // already off
-    return;
-  }
-  digitalWrite(SW, LOW);
-  LED_RELAY_OFF;
-  sw_state = OFF;
-
-#ifdef DEBUG_SW
-  DEBUG_SW.println(TimeStamp + "turn Off light...");
-#endif
-}
-
 
 void clear_eeprom(){
   EEPROM.begin(512);
@@ -247,9 +185,9 @@ bool jsonPaser(byte* payload){
 #endif
   if(!strcmp(target_id, device_name)){
     if(!strcmp(value,"0")){
-      TurnOFF();
+      TurnOFF(&sw_state);
     }else if(!strcmp(value,"1")){
-      TurnON();
+      TurnON(&sw_state);
     }else{
       return false;
     }
@@ -439,9 +377,9 @@ void loop(){
     Serial.print(onoff);
 
     if(onoff == 0x55)
-      TurnON();
+      TurnON(&sw_state);
     else if(onoff == 0x56)
-      TurnOFF();
+      TurnOFF(&sw_state);
     delay(100);
     }
 

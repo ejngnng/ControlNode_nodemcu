@@ -13,6 +13,8 @@
 #include <Arduino.h>
 
 
+#define TimeStamp   (String("[") + String(millis()) + String("] "))
+
 /* debug for every feature */
 #define DEBUG_WiFi  Serial
 #define DEBUG_MQTT  Serial
