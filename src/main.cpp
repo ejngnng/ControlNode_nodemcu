@@ -72,8 +72,8 @@ void setup(){
 
   portInit();
 
-  //Connect_WiFi();
-  SmartConfig();
+  Connect_WiFi();
+  //SmartConfig();
 
   //SSDPClientSetup();
   MQTTSetup();

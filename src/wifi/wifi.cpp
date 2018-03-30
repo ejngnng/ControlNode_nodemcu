@@ -34,8 +34,8 @@ void Connect_WiFi(){
   get_wifi(&wifi_value);
 
   WiFi.mode(WIFI_STA);
-  //WiFi.begin(wifi_value.wifi_ssid.c_str(), wifi_value.wifi_psw.c_str());
-  WiFi.begin(_ssid, _password);
+  WiFi.begin(wifi_value.wifi_ssid.c_str(), wifi_value.wifi_psw.c_str());
+//  WiFi.begin(_ssid, _password);
   unsigned int timeOut = 10;
 
   while(timeOut --){
