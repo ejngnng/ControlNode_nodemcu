@@ -10,6 +10,7 @@
 #include <WiFiManager.h>
 #include <DNSServer.h>
 #include "Protocol/registerMsg.h"
+#include "Protocol/statusMsg.h"
 
 class deviceManipulation
 {

@@ -10,8 +10,10 @@ class statusMsg{
     String _uuid;
     String _attribute;
     String _value;
-
+    deviceStatus_t status;
+    
   public:
+    statusMsg(deviceStatus_t *status);
     String statusMsgGenerator();
 
 };

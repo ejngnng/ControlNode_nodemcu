@@ -38,4 +38,9 @@ typedef struct deviceObj_s{
   String deviceVendor;
 }deviceObj_t;
 
+typedef struct deviceStatus_s{
+  attribute_type attribute;
+  String value;
+}deviceStatus_t;
+
 #endif
