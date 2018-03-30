@@ -5,6 +5,15 @@
 deviceManipulation::deviceManipulation(PubSubClient *mqttClient)
 {
     this->mqttClient = mqttClient;
+
+    unsigned char mac[6];
+    memset(mac, 0, 6);
+    WiFi.macAddress(mac);
+    String temp = "";
+    for(unsigned char i=0; i<6; i++){
+      temp += String(mac[i], HEX);
+    }
+    this->_uuid = temp;
 }
 
 int deviceManipulation::deviceRegister()
@@ -57,6 +66,13 @@ int deviceManipulation::deviceOperate(byte* payload)
     const char* uuid = data["UUID"];
     const char* action = data["action"];
     const char* value = data["value"];
+
+    char temp[this->_uuid.length()+1];
+    this->_uuid.toCharArray(temp, this->_uuid.length()+1);
+    if(strcmp(uuid, temp)){
+      Serial.println("not for me...");
+      return 0;
+    }
 #if 0
     printf("uuid is %s\n", uuid);
     printf("action is %s\n", action);

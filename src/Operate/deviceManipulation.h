@@ -21,7 +21,7 @@ private:
     const char* topicStatus = "device/status_update";
 
     int operatePeer(const char* action, const char* value);
-
+    String _uuid;
 
 public:
     deviceManipulation(PubSubClient *mqttClient);
