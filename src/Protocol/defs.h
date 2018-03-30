@@ -1,5 +1,9 @@
-#ifndef defs_H
-#define defs_H
+#ifndef __DEFS_H
+#define __DEFS_H
+
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include "common/common.h"
 
 enum attribute_type{
   ONOFF = 0,
@@ -12,10 +16,6 @@ enum attribute_type{
   ONOFFLINE
 };
 
-enum onoff_value{
-  OFF = 0,
-  ON
-};
 
 enum mode_value{
   LIGHTNING = 0,
@@ -31,5 +31,11 @@ enum online_value{
   ONLINE
 };
 
+typedef struct deviceObj_s{
+  String deviceID;
+  String deviceName;
+  String deviceType;
+  String deviceVendor;
+}deviceObj_t;
 
 #endif

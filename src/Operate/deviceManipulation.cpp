@@ -9,6 +9,7 @@ deviceManipulation::deviceManipulation(PubSubClient *mqttClient)
 
 int deviceManipulation::deviceRegister()
 {
+  #if 0
     uint8 mac[6];
     char mac_str[12] = {0};
     char msg[256] = {0};
@@ -24,6 +25,23 @@ int deviceManipulation::deviceRegister()
 
     printf("\nbegin to pub %s\n", msg);
     mqttClient->publish(topicRegister, msg);
+#endif
+    deviceObj_t device;
+    memset(&device, 0, sizeof(deviceObj_t));
+    device.deviceName = "light";
+    device.deviceType = "lamp";
+    device.deviceVendor = "ht";
+
+    registerMsg reg(&device);
+    String msg = reg.registerMsgGenerator();
+    char buffer[msg.length()+1];
+    memset(buffer, 0, msg.length()+1);
+    msg.toCharArray(buffer, msg.length()+1);
+    #ifdef DEBUG_MQTT
+    Serial.print("register msg: ");
+    Serial.println(buffer);
+    #endif
+    mqttClient->publish(topicRegister, buffer);
 
     return 0;
 }

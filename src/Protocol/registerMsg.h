@@ -11,8 +11,9 @@ class registerMsg{
     String _uuid;
     String _type;
     String _vendor;
-
+    deviceObj_t device;
   public:
+    registerMsg(deviceObj_t *device);
     String registerMsgGenerator();
 };
 

@@ -9,7 +9,7 @@
 
 #include <WiFiManager.h>
 #include <DNSServer.h>
-
+#include "Protocol/registerMsg.h"
 
 class deviceManipulation
 {
