@@ -27,4 +27,6 @@ void clear_eeprom();
 void get_wifi(WiFi_Obj_t *wifi_obj);
 void store_wifi();
 
+String getMAC();
+
 #endif

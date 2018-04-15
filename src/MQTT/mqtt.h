@@ -9,6 +9,7 @@
 
 #include "GPIO/io.h"
 #include "Operate/deviceManipulation.h"
+#include "wifi/wifi.h"
 
 #define SSDP_PORT 1883
 
@@ -20,6 +21,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 
 void reconnect();
 
+void constructSubTopic(char *topic);
 
 
 #endif

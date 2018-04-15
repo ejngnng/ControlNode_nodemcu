@@ -111,6 +111,9 @@ void reconnect() {
 
       // ... and resubscribe
       MQTTClient.subscribe(subTopic);
+      char* operateTopic;
+      constructSubTopic(operateTopic);
+      MQTTClient.subscribe(operateTopic);
     } else {
 
 #ifdef DEBUG_MQTT
@@ -121,4 +124,14 @@ void reconnect() {
       //delay(1000);
     }
   }
+}
+
+void constructSubTopic(char *topic){
+  String _topic = "";
+  _topic += "device/";
+  String mac = "";
+  mac = getMAC();
+  _topic += mac;
+
+  _topic.toCharArray(topic, _topic.length() + 1);
 }
